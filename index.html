@@ -1,0 +1,980 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vetted bilingual Tradie Directory in VIC — Home Electrification</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #F7F2E5;
+    --surface: #FFFFFF;
+    --olive-dark: #33482E;
+    --primary: #33482E;
+    --primary-dark: #212F1D;
+    --accent-dark: #33482E;
+    --text: #2E2A20;
+    --text-secondary: #6B6653;
+    --text-muted: #6B6653;      /* 5.75:1 on white - was #9A9580 at 3.01:1 */
+    --text-faint: #8A8471;      /* decorative only, never for text that must be read */
+    --border: #E6DFC9;
+    --electrician: #B8863B;
+    --electrician-bg: #F3E8D2;
+    --electrician-text: #5C4319;
+    --plumber: #3F7D4A;
+    --plumber-bg: #E6EDDA;
+    --plumber-text: #245430;
+    --shadow-sm: 0 1px 2px rgba(46, 42, 32, 0.05);
+    --shadow-md: 0 6px 16px -6px rgba(46, 42, 32, 0.22);
+    --ring: 0 0 0 3px rgba(51, 72, 46, 0.28);
+    --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Poppins', sans-serif;
+    font-size: 17px;            /* larger base for older readers */
+    line-height: 1.6;
+    -webkit-text-size-adjust: 100%;
+  }
+  .site-header {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.4rem 0.9rem;
+    padding: 1.1rem 1.5rem;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+  }
+  .site-header .wordmark {
+    font-family: 'Baloo 2', sans-serif;
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: var(--olive-dark);
+    white-space: nowrap;
+  }
+  .site-header .crumb {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+  }
+  .site-header .crumb strong {
+    color: var(--text);
+    font-weight: 600;
+  }
+  .wrap {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 2.5rem 1.5rem 4rem;
+  }
+  header { margin-bottom: 2rem; }
+  h1 {
+    font-family: 'Baloo 2', sans-serif;
+    font-weight: 600;
+    font-size: clamp(1.7rem, 5vw, 2.2rem);
+    margin: 0 0 0.5rem;
+    color: var(--olive-dark);
+    letter-spacing: -0.01em;
+  }
+  header p {
+    margin: 0;
+    color: var(--text-secondary);
+    max-width: 640px;
+  }
+
+  /* ---------- Filters ---------- */
+  .filters {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 0.75rem;
+    margin: 2rem 0 1.5rem;
+    padding: 1.1rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    box-shadow: var(--shadow-sm);
+  }
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    min-width: 150px;
+    flex: 1 1 150px;
+  }
+  .field label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+  .filters select {
+    font-family: inherit;
+    font-size: 1rem;
+    min-height: 48px;           /* comfortable touch target */
+    padding: 0.6rem 2.2rem 0.6rem 0.85rem;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background-color: var(--bg);
+    color: var(--text);
+    width: 100%;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5 6 6.5l5-5' fill='none' stroke='%236B6653' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.7rem center;
+    background-size: 0.7rem;
+    cursor: pointer;
+  }
+  .filters select:focus-visible {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: var(--ring);
+  }
+  .btn-reset {
+    font-family: inherit;
+    font-size: 0.95rem;
+    min-height: 48px;
+    font-weight: 600;
+    color: var(--accent-dark);
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    transition: background-color 0.18s var(--ease), border-color 0.18s var(--ease);
+  }
+  .btn-reset:hover { background: var(--bg); border-color: var(--primary); }
+  .btn-reset:focus-visible { outline: none; box-shadow: var(--ring); }
+  .btn-reset[hidden], .field[hidden] { display: none; }
+
+  .result-count {
+    font-size: 0.95rem;
+    color: var(--text-muted);
+    margin: 0 0 1.1rem;
+    min-height: 1.3em;
+  }
+
+  /* ---------- List ----------
+     A single readable column: a card grid and variable-height inline
+     detail fight each other, an accordion list does not. */
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    align-items: start;
+    gap: 0.85rem;
+  }
+
+  /* ---------- Card ---------- */
+  .card {
+    position: relative;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--electrician);
+    border-radius: 12px;
+    box-shadow: var(--shadow-sm);
+    transition: box-shadow 0.22s var(--ease), border-color 0.22s var(--ease), transform 0.22s var(--ease);
+  }
+  .card.plumber { border-left-color: var(--plumber); }
+  .card:hover { box-shadow: var(--shadow-md); }
+  .card.expanded {
+    box-shadow: var(--shadow-md);
+    border-color: var(--primary);
+  }
+  .card:has(.card-toggle:focus-visible) { box-shadow: var(--ring), var(--shadow-md); }
+
+  .card-toggle {
+    display: block;
+    width: 100%;
+    text-align: left;
+    font: inherit;
+    color: inherit;
+    background: none;
+    border: 0;
+    border-radius: 12px 12px 0 0;
+    padding: 1.2rem 1.3rem 0.9rem;
+    cursor: pointer;
+  }
+  .card-toggle:focus { outline: none; }
+  .card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 0.6rem;
+    margin-bottom: 0.5rem;
+  }
+  .biz-name {
+    font-family: 'Baloo 2', sans-serif;
+    font-weight: 600;
+    font-size: 1.2rem;
+    color: var(--text);
+    margin: 0;
+    line-height: 1.3;
+  }
+  .trade-badge {
+    flex: none;
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 0.2rem 0.55rem;
+    border-radius: 100px;
+    white-space: nowrap;
+    background: var(--electrician-bg);
+    color: var(--electrician-text);
+  }
+  .card.plumber .trade-badge {
+    background: var(--plumber-bg);
+    color: var(--plumber-text);
+  }
+  .meta-line {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.4rem;
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    margin: 0 0 0.7rem;
+  }
+  .meta-line svg { flex: none; margin-top: 0.2em; }
+  .pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+  }
+  .pill {
+    font-size: 0.85rem;
+    padding: 0.25rem 0.65rem;
+    border-radius: 100px;
+    background: var(--bg);
+    color: var(--text-secondary);
+    border: 1px solid var(--border);
+  }
+  .pill.lang {
+    background: var(--plumber-bg);
+    color: var(--accent-dark);
+    border-color: transparent;
+    font-weight: 500;
+  }
+  .chevron {
+    transition: transform 0.28s var(--ease);
+  }
+  .card.expanded .chevron { transform: rotate(180deg); }
+
+  /* Collapsible panel: 0fr -> 1fr animates to the content's natural height. */
+  .card-panel {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.3s var(--ease);
+  }
+  .card.expanded .card-panel { grid-template-rows: 1fr; }
+  .card-panel > .card-details {
+    overflow: hidden;
+    visibility: hidden;
+    opacity: 0;
+    transition: visibility 0.3s var(--ease), opacity 0.2s var(--ease);
+  }
+  .card.expanded .card-panel > .card-details {
+    visibility: visible;
+    opacity: 1;
+    transition-delay: 0.06s;
+  }
+  .card-details-inner {
+    margin: 0 1.3rem;
+    padding: 1rem 0 1.3rem;
+    border-top: 1px dashed var(--border);
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+  }
+  .card-details dl {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.35rem 0.7rem;
+    margin: 0;
+  }
+  .card-details dt { color: var(--text-muted); }
+  .card-details dd {
+    margin: 0;
+    color: var(--text);
+    font-weight: 500;
+    overflow-wrap: anywhere;
+  }
+  .card-details a {
+    color: var(--accent-dark);
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .card-details a:hover { text-decoration: underline; }
+  .card-details a:focus-visible {
+    outline: none;
+    border-radius: 4px;
+    box-shadow: var(--ring);
+  }
+  .experience-list {
+    margin-top: 0.8rem;
+    padding-top: 0.8rem;
+    border-top: 1px solid var(--border);
+  }
+  .experience-list h3 {
+    font: inherit;
+    color: var(--text-muted);
+    margin: 0 0 0.4rem;
+  }
+  .experience-list ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 0.3rem;
+  }
+  .experience-list li {
+    font-size: 0.95rem;
+    color: var(--text);
+    padding-left: 1rem;
+    position: relative;
+  }
+  .experience-list li::before {
+    content: "";
+    position: absolute;
+    left: 0.1rem;
+    top: 0.55em;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--plumber);
+  }
+
+  /* ---------- Actions ----------
+     Calling is the primary action for this audience, so it is the filled
+     button. Details is a real, visibly bordered secondary button: the old
+     text hint was 12.5px at 3:1 contrast and read as decoration. */
+  .card-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin: 0 1.3rem;
+    padding: 1rem 0 1.2rem;
+    border-top: 1px solid var(--border);
+  }
+  /* Tighten the gap once the panel sits directly beneath the buttons. */
+  .card.expanded .card-actions { padding-bottom: 0.9rem; }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    flex: 1 1 12rem;
+    min-height: 52px;
+    padding: 0.7rem 1.1rem;
+    font-family: inherit;
+    font-size: 1.05rem;
+    font-weight: 600;
+    line-height: 1.25;
+    border-radius: 10px;
+    border: 2px solid transparent;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.18s var(--ease), border-color 0.18s var(--ease);
+  }
+  .btn:focus-visible { outline: none; box-shadow: var(--ring); }
+  .btn svg { flex: none; }
+  .btn-call {
+    background: var(--primary);
+    color: #FFFFFF;
+    border-color: var(--primary);
+  }
+  .btn-call:hover { background: var(--primary-dark); border-color: var(--primary-dark); }
+  .btn-call.is-empty {
+    background: var(--bg);
+    color: var(--text-muted);
+    border-color: var(--border);
+    cursor: default;
+    font-weight: 500;
+  }
+  .btn-details {
+    background: var(--surface);
+    color: var(--primary);
+    border-color: var(--primary);
+  }
+  .btn-details:hover { background: var(--plumber-bg); }
+
+  /* ---------- Skeleton / empty ---------- */
+  .skeleton {
+    border-left-color: var(--border);
+    padding: 1.2rem 1.3rem;
+  }
+  .sk-line {
+    height: 0.7rem;
+    border-radius: 100px;
+    background: linear-gradient(90deg, var(--bg) 25%, #EFE9D6 50%, var(--bg) 75%);
+    background-size: 200% 100%;
+    animation: sk 1.4s var(--ease) infinite;
+    margin-bottom: 0.6rem;
+  }
+  @keyframes sk { from { background-position: 200% 0; } to { background-position: -200% 0; } }
+  .empty {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: var(--text-secondary);
+    background: var(--surface);
+    border: 1px dashed var(--border);
+    border-radius: 12px;
+  }
+  .empty strong {
+    display: block;
+    font-family: 'Baloo 2', sans-serif;
+    font-size: 1.1rem;
+    color: var(--text);
+    margin-bottom: 0.4rem;
+    font-weight: 600;
+  }
+  .sr-only {
+    position: absolute;
+    width: 1px; height: 1px;
+    padding: 0; margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+  }
+  @media (max-width: 480px) {
+    .wrap { padding: 1.75rem 1rem 3rem; }
+    .field { flex-basis: 100%; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  }
+</style>
+</head>
+<body>
+<div class="site-header">
+  <span class="wordmark">Asians for Climate Solutions</span>
+  <span class="crumb"><strong>Vetted bilingual Tradie Directory</strong></span>
+</div>
+<div class="wrap">
+  <header>
+    <h1>Vetted bilingual Tradie Directory</h1>
+    <p>Licensed electricians, plumbers and gasfitters for home electrification, checked and verified. Every listing here has confirmed their licence, service area and consent to be listed.</p>
+  </header>
+
+  <div class="filters">
+    <div class="field">
+      <label for="filterArea">Service area</label>
+      <select id="filterArea"><option value="">All areas</option></select>
+    </div>
+    <div class="field">
+      <label for="filterTrade">Trade</label>
+      <select id="filterTrade">
+        <option value="">All trades</option>
+        <option value="Electrician">Electrician</option>
+        <option value="Plumber/Gasfitter">Plumber/Gasfitter</option>
+      </select>
+    </div>
+    <div class="field">
+      <label for="filterLang">Language</label>
+      <select id="filterLang">
+        <option value="">All languages</option>
+        <option value="Mandarin">Mandarin</option>
+        <option value="Cantonese">Cantonese</option>
+        <option value="Vietnamese">Vietnamese</option>
+        <option value="Korean">Korean</option>
+        <option value="Arabic">Arabic</option>
+      </select>
+    </div>
+    <button type="button" class="btn-reset" id="resetFilters" hidden>Clear filters</button>
+  </div>
+
+  <p class="result-count" id="resultCount" role="status" aria-live="polite"></p>
+  <div class="grid" id="grid"></div>
+  <div class="empty" id="emptyState" hidden>
+    <strong id="emptyTitle">No matches yet</strong>
+    <span id="emptyBody">Try clearing a filter, or widen the search to a nearby area.</span>
+  </div>
+</div>
+
+<script>
+const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSLvBXWscmhggxsykrz5fHCoRoEzhHs_Swe7chJA7pTVrCZWJGH4vlHblFJ7ZeJ-vmJs-Oj-pRTAcEW/pub?gid=675839864&single=true&output=csv";
+
+/* ---------------------------------------------------------------------------
+   Geography
+   ---------------------------------------------------------------------------
+   STATES is the canonical vocabulary. ACTIVE_STATES is the launch switch:
+   only states listed here are shown or selectable, so a NSW row typed into
+   the sheet early will not leak onto the site before you are ready for it.
+
+   To go live in NSW later: add 'NSW' to ACTIVE_STATES. Nothing else.
+   To add a new Melbourne area (e.g. Northern): add it to VIC.areas below.
+--------------------------------------------------------------------------- */
+const STATES = {
+  VIC: {
+    label: 'Victoria',
+    metro: 'Melbourne',
+    areas: ['Eastern', 'South-Eastern', 'Western']
+  },
+  NSW: {
+    label: 'New South Wales',
+    metro: 'Sydney',
+    areas: ['Eastern', 'Inner West', 'Northern', 'Western', 'South-Western']
+  }
+};
+
+// States the public site currently serves. Remove a code to hide that state's
+// listings entirely, whatever the sheet says.
+const ACTIVE_STATES = ['VIC', 'NSW'];
+
+// Wildcard value for "covers the whole metro area" (rendered as All Melbourne
+// / All Sydney depending on the state in view).
+const ALL_METRO = '__ALL_METRO__';
+const DEFAULT_STATE = 'VIC';
+
+// The sheet is filled in by volunteers, so normalise on read rather than
+// trying to police how it is typed.
+const STATE_ALIASES = {
+  'vic': 'VIC', 'victoria': 'VIC', 'victoria state': 'VIC', 'state of victoria': 'VIC',
+  'nsw': 'NSW', 'new south wales': 'NSW', 'new south wales state': 'NSW'
+};
+
+const AREA_ALIASES = {
+  'east': 'Eastern', 'eastern': 'Eastern', 'eastern suburbs': 'Eastern',
+  'south east': 'South-Eastern', 'south-east': 'South-Eastern',
+  'south eastern': 'South-Eastern', 'southeastern': 'South-Eastern',
+  'south-eastern': 'South-Eastern', 'south eastern suburbs': 'South-Eastern',
+  'south-eastern suburbs': 'South-Eastern', 'se': 'South-Eastern',
+  'west': 'Western', 'western': 'Western', 'western suburbs': 'Western',
+  'north': 'Northern', 'northern': 'Northern', 'northern suburbs': 'Northern',
+  'inner west': 'Inner West', 'south west': 'South-Western', 'south-western': 'South-Western'
+};
+
+// Returns null for a blank or unrecognised state. Listings are then withheld
+// rather than guessed at: publishing a tradie under the wrong state is worse
+// than omitting them, and a blank cell means someone simply has not filled it in.
+function normaliseState(raw) {
+  const key = (raw || '').trim().toLowerCase();
+  if (!key) return null;
+  return STATE_ALIASES[key] || (STATES[key.toUpperCase()] ? key.toUpperCase() : null);
+}
+
+// "All Melbourne" and friends mean the whole metro, whichever state we are in.
+function isWholeMetro(value) {
+  return /^all\s+(melbourne|sydney|metro|areas?)$/i.test(value.trim());
+}
+
+function normaliseArea(raw) {
+  const value = (raw || '').trim();
+  if (!value) return null;
+  if (isWholeMetro(value)) return ALL_METRO;
+  return AREA_ALIASES[value.toLowerCase()] || value;
+}
+
+// Dropdown labels carry the state, e.g. "Eastern suburbs \u00B7 VIC".
+// Only the unfiltered "All areas" option is left unsuffixed.
+function areaOptionLabel(area, state) {
+  return area + ' suburbs \u00B7 ' + state;
+}
+
+function metroOptionLabel(state) {
+  return metroLabel(state) + ' \u00B7 ' + state;
+}
+
+function metroLabel(state) {
+  return 'All ' + ((STATES[state] || STATES[DEFAULT_STATE]).metro);
+}
+
+// Human-readable service area for the card, built from canonical values.
+function areaSummary(t) {
+  // "All Melbourne" already names the metro, so it takes no state suffix.
+  if (t.coversWholeMetro) return metroLabel(t.state);
+  if (!t.areas.length) return 'Service area not listed';
+  return t.areas.join(', ') + ' \u00B7 ' + t.state;
+}
+
+const EXPERIENCE_LABELS = {
+  a: "Gas to electricity conversion",
+  b: "Switchboard assessment",
+  c: "Induction cooktop",
+  d: "Heat pump hot water",
+  e: "Reverse-cycle heating",
+  f: "Solar & EV charging",
+  g: "Gas disconnection & capping",
+  h: "Older homes & rentals",
+  i: "Load management",
+  j: "Asbestos/structural awareness",
+  k: "Coordinating with other trades"
+};
+
+const ICON_PIN = '<svg width="12" height="12" viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 14.5s5-4.4 5-8a5 5 0 0 0-10 0c0 3.6 5 8 5 8Z"/><circle cx="8" cy="6.4" r="1.8"/></svg>';
+const ICON_PHONE = '<svg width="13" height="13" viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 2.5h2.3l1.2 3-1.5 1.1a8.2 8.2 0 0 0 4.4 4.4l1.1-1.5 3 1.2V13a1 1 0 0 1-1.1 1A11.5 11.5 0 0 1 2 3.6 1 1 0 0 1 3 2.5Z"/></svg>';
+const ICON_CHEVRON = '<svg class="chevron" width="12" height="12" viewBox="0 0 12 8" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 1.5 6 6.5l5-5"/></svg>';
+
+// Escapes values coming from the sheet before they reach innerHTML.
+function esc(value) {
+  return String(value == null ? '' : value).replace(/[&<>"']/g, c => (
+    { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]
+  ));
+}
+
+// Parses CSV text, handling quoted fields with embedded commas, newlines and escaped quotes.
+function parseCSV(text) {
+  const rows = [];
+  let row = [], field = '', inQuotes = false;
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i], next = text[i + 1];
+    if (inQuotes) {
+      if (c === '"' && next === '"') { field += '"'; i++; }
+      else if (c === '"') { inQuotes = false; }
+      else { field += c; }
+    } else {
+      if (c === '"') { inQuotes = true; }
+      else if (c === ',') { row.push(field); field = ''; }
+      else if (c === '\r') { /* skip */ }
+      else if (c === '\n') { row.push(field); rows.push(row); row = []; field = ''; }
+      else { field += c; }
+    }
+  }
+  if (field.length || row.length) { row.push(field); rows.push(row); }
+  const headers = rows.shift().map(h => h.trim());
+  return rows
+    .filter(r => r.some(v => v.trim() !== ''))
+    .map(r => Object.fromEntries(headers.map((h, i) => [h, (r[i] || '').trim()])));
+}
+
+function detectExperience(text) {
+  if (!text) return [];
+  const found = [...new Set([...text.matchAll(/\b([a-k])\)/g)].map(m => m[1]))];
+  return found.map(letter => EXPERIENCE_LABELS[letter]).filter(Boolean);
+}
+
+function isUrl(text) {
+  return /^https?:\/\//i.test((text || '').trim());
+}
+
+// Display text for a link: drop the scheme, trailing slash and query string,
+// which are noise on a card. The href keeps the full URL.
+function urlLabel(url) {
+  return url.replace(/^https?:\/\//i, '').replace(/[?#].*$/, '').replace(/\/$/, '');
+}
+
+// Volunteers paste URLs with or without a scheme; normalise to a usable href.
+function toUrl(text) {
+  const value = (text || '').trim();
+  if (!value) return null;
+  if (isUrl(value)) return value;
+  return /^[\w-]+(\.[\w-]+)+(\/.*)?$/.test(value) ? 'https://' + value : null;
+}
+
+// Header lookup is deliberately forgiving: the sheet is edited by hand, so a
+// renamed or re-spaced column should not silently blank a field. Each field
+// lists the header spellings it will accept, matched case/punctuation-insensitively.
+const COLUMNS = {
+  name:       ['Business / Trading Name', 'Business Name', 'Trading Name'],
+  trade:      ['Trade Type', 'Trade'],
+  state:      ['State', 'State / Territory'],
+  area:       ['Service Area', 'Council / Service Area', 'Council', 'Suburbs'],
+  languages:  ['Language(s) - CONFIRMED', 'Languages', 'Language(s)'],
+  experience: ['Experience Tags', 'Experience'],
+  phone:      ['Phone', 'Contact Phone', 'Mobile'],
+  abn:        ['ABN'],
+  licence:    ['Licence / Registration No.', 'Licence No.', 'Licence Number'],
+  authority:  ['Licensing Authority', 'Authority'],
+  expiry:     ['Licence Expiry Date', 'Licence Expiry'],
+  website:    ['Weblink', 'Web Link', 'Website', 'URL'],
+  notes:      ['Notes'],
+  status:     ['Status', 'Consent Status']
+};
+
+function headerKey(h) {
+  return String(h).toLowerCase().replace(/[^a-z0-9]/g, '');
+}
+
+// Resolves a field to the first header present in the sheet, and warns once if
+// none of the accepted spellings exist.
+function pick(row, field) {
+  const candidates = COLUMNS[field] || [field];
+  for (const c of candidates) {
+    if (row[c] != null && row[c] !== '') return row[c];
+  }
+  const lookup = Object.fromEntries(Object.keys(row).map(k => [headerKey(k), k]));
+  for (const c of candidates) {
+    const hit = lookup[headerKey(c)];
+    if (hit && row[hit]) return row[hit];
+  }
+  return '';
+}
+
+function warnMissingColumns(row) {
+  const lookup = new Set(Object.keys(row).map(headerKey));
+  const missing = Object.entries(COLUMNS)
+    .filter(([field, names]) => field !== 'state' && !names.some(n => lookup.has(headerKey(n))))
+    .map(([field, names]) => field + ' (expected one of: ' + names.join(' / ') + ')');
+  if (missing.length) {
+    console.warn('[directory] Columns not found in the sheet: ' + missing.join('; '));
+  }
+}
+
+function mapRow(row, index) {
+  const name = pick(row, 'name');
+  const licence = pick(row, 'licence');
+  // Weblink is the column; older sheets kept the URL loose in Notes.
+  const weblink = pick(row, 'website') || pick(row, 'notes');
+  const parsedAreas = pick(row, 'area').split(',').map(a => normaliseArea(a)).filter(Boolean);
+  return {
+    id: (name || 'row') + '|' + (licence || index),
+    name: name,
+    trade: pick(row, 'trade'),
+    state: normaliseState(pick(row, 'state')),
+    coversWholeMetro: parsedAreas.includes(ALL_METRO),
+    areas: [...new Set(parsedAreas.filter(a => a !== ALL_METRO))],
+    languages: pick(row, 'languages').split(',').map(s => s.trim()).filter(Boolean),
+    experience: detectExperience(pick(row, 'experience')),
+    contact: pick(row, 'phone'),
+    abn: pick(row, 'abn'),
+    licence: licence,
+    authority: pick(row, 'authority'),
+    expiry: pick(row, 'expiry'),
+    website: toUrl(weblink),
+    status: pick(row, 'status')
+  };
+}
+
+const areaSel = document.getElementById('filterArea');
+const tradeSel = document.getElementById('filterTrade');
+const langSel = document.getElementById('filterLang');
+const resetBtn = document.getElementById('resetFilters');
+const grid = document.getElementById('grid');
+const resultCount = document.getElementById('resultCount');
+const emptyState = document.getElementById('emptyState');
+const emptyTitle = document.getElementById('emptyTitle');
+const emptyBody = document.getElementById('emptyBody');
+
+let tradies = [];
+// Which listing is open, tracked by data id so it survives a re-render.
+let expandedId = null;
+
+function showSkeletons(n = 6) {
+  grid.innerHTML = Array.from({ length: n }, () => `
+    <div class="card skeleton" aria-hidden="true">
+      <div class="sk-line" style="width:65%"></div>
+      <div class="sk-line" style="width:40%"></div>
+      <div class="sk-line" style="width:80%"></div>
+    </div>`).join('');
+  resultCount.textContent = 'Loading listings…';
+}
+
+async function loadData() {
+  showSkeletons();
+  try {
+    const res = await fetch(CSV_URL);
+    if (!res.ok) throw new Error('Sheet fetch failed: ' + res.status);
+    const text = await res.text();
+    const raw = parseCSV(text);
+    if (raw.length) warnMissingColumns(raw[0]);
+    const rows = raw.map(mapRow);
+    const ready = rows.filter(t =>
+      (t.status || '').trim().toLowerCase() === 'ready for publication');
+    const withheld = ready.filter(t => !ACTIVE_STATES.includes(t.state));
+    if (withheld.length) {
+      console.warn('[directory] Withheld ' + withheld.length + ' ready listing(s) whose ' +
+        'State is blank or not currently served: ' +
+        withheld.map(t => (t.name || 'unnamed') + ' (' + (t.state || 'blank') + ')').join(', '));
+    }
+    tradies = ready.filter(t => ACTIVE_STATES.includes(t.state));
+    buildFilterOptions();
+    render();
+  } catch (err) {
+    grid.innerHTML = '';
+    grid.hidden = true;
+    emptyState.hidden = false;
+    emptyTitle.textContent = 'Could not load the sheet';
+    emptyBody.textContent = 'Check the published CSV link is still valid, or your connection. (' + err.message + ')';
+    resultCount.textContent = '';
+  }
+}
+
+// An option value is "STATE:AREA" (or "STATE:<whole metro>"), because the same
+// area name exists in more than one state.
+function parseAreaValue(value) {
+  const [state, ...rest] = value.split(':');
+  return { state: state, area: rest.join(':') };
+}
+
+function areaMatches(t, selected) {
+  if (!selected) return true;
+  const { state, area } = parseAreaValue(selected);
+  if (t.state !== state) return false;
+  if (area === ALL_METRO) return t.coversWholeMetro;
+  // Whole-metro tradies serve every area in their own state.
+  return t.coversWholeMetro || t.areas.includes(area);
+}
+
+// Options come from the vocabulary AND the data, intersected: configured areas
+// with no listings are not offered, and a value that appears in the sheet but
+// is not in STATES is surfaced in the console rather than silently dropped.
+function buildFilterOptions() {
+  const liveStates = ACTIVE_STATES.filter(code => tradies.some(t => t.state === code));
+
+  const optionsFor = (code) => {
+    const known = (STATES[code] || STATES[DEFAULT_STATE]).areas;
+    const inState = tradies.filter(t => t.state === code);
+
+    const unknown = [...new Set(inState.flatMap(t => t.areas))].filter(a => !known.includes(a));
+    if (unknown.length) {
+      console.warn('[directory] Service areas in the sheet that are not in STATES.' +
+        code + '.areas, so they are not filterable: ' + unknown.join(', '));
+    }
+
+    const parts = [];
+    if (inState.some(t => t.coversWholeMetro)) {
+      parts.push(`<option value="${code}:${ALL_METRO}">${esc(metroOptionLabel(code))}</option>`);
+    }
+    known.filter(a => inState.some(t => t.areas.includes(a))).forEach(a => {
+      parts.push(`<option value="${esc(code + ':' + a)}">${esc(areaOptionLabel(a, code))}</option>`);
+    });
+    return parts.join('');
+  };
+
+  // Group by state only once a second state actually has listings.
+  const body = liveStates.length > 1
+    ? liveStates.map(code =>
+        `<optgroup label="${esc(STATES[code].label)}">${optionsFor(code)}</optgroup>`).join('')
+    : liveStates.map(optionsFor).join('');
+
+  const previous = areaSel.value;
+  areaSel.innerHTML = '<option value="">All areas</option>' + body;
+  // Keep the user's choice if it still exists after a data refresh.
+  areaSel.value = [...areaSel.options].some(o => o.value === previous) ? previous : '';
+}
+
+function cardHTML(t, i) {
+  const open = t.id === expandedId;
+  const label = t.name || 'Business name not listed';
+  const panelId = 'details-' + i;
+  const toggleId = 'toggle-' + i;
+  const tel = (t.contact || '').replace(/[^\d+]/g, '');
+  const expiryRow = t.expiry ? `<dt>Licence expiry</dt><dd>${esc(t.expiry)}</dd>` : '';
+  const experienceHTML = t.experience.length ? `
+    <div class="experience-list">
+      <h3>Experience</h3>
+      <ul>${t.experience.map(e => `<li>${esc(e)}</li>`).join('')}</ul>
+    </div>` : '';
+
+  return `
+    <article class="card${/plumber|gasfitter/i.test(t.trade || '') ? ' plumber' : ''}${open ? ' expanded' : ''}" data-id="${esc(t.id)}">
+      <button type="button" class="card-toggle" id="${toggleId}" aria-expanded="${open}" aria-controls="${panelId}">
+        <span class="card-top">
+          <span class="biz-name">${esc(label)}</span>
+          <span class="trade-badge">${esc(t.trade)}</span>
+        </span>
+        <span class="meta-line">${ICON_PIN}<span>${esc(areaSummary(t))}</span></span>
+        ${t.languages.length ? `<span class="pills">${t.languages.map(l => `<span class="pill lang">${esc(l)}</span>`).join('')}</span>` : ''}
+      </button>
+      <div class="card-actions">
+        ${tel
+          ? `<a class="btn btn-call" href="tel:${esc(tel)}">${ICON_PHONE}<span>Call ${esc(t.contact)}</span></a>`
+          : `<span class="btn btn-call is-empty">${ICON_PHONE}<span>No phone on file</span></span>`}
+        <button type="button" class="btn btn-details" aria-expanded="${open}" aria-controls="${panelId}">
+          <span class="toggle-text">${open ? 'Hide details' : 'View details'}</span>${ICON_CHEVRON}
+          <span class="sr-only"> for ${esc(label)}</span>
+        </button>
+      </div>
+      <div class="card-panel">
+        <div class="card-details" id="${panelId}" role="region" aria-labelledby="${toggleId}">
+          <div class="card-details-inner">
+            <dl>
+              <dt>ABN</dt><dd>${esc(t.abn) || 'Not on file'}</dd>
+              <dt>Licence</dt><dd>${esc(t.licence) || 'Not on file'}${t.authority ? ' &middot; ' + esc(t.authority) : ''}</dd>
+              ${expiryRow}
+              <dt>Website</dt><dd>${t.website ? `<a href="${esc(t.website)}" target="_blank" rel="noopener">${esc(urlLabel(t.website))}</a>` : 'Not currently listed'}</dd>
+            </dl>
+            ${experienceHTML}
+          </div>
+        </div>
+      </div>
+    </article>`;
+}
+
+function tradeMatches(tradieTrade, selected) {
+  if (!selected) return true;
+  if (selected === 'Plumber/Gasfitter') return /plumber|gasfitter/i.test(tradieTrade || '');
+  return (tradieTrade || '').trim() === selected;
+}
+
+function render() {
+  const area = areaSel.value;
+  const trade = tradeSel.value;
+  const lang = langSel.value;
+  const hasFilters = Boolean(area || trade || lang);
+
+  const filtered = tradies.filter(t => {
+    if (!areaMatches(t, area)) return false;
+    if (!tradeMatches(t.trade, trade)) return false;
+    if (lang && !t.languages.includes(lang)) return false;
+    return true;
+  });
+
+  // Drop the open state only if that listing is no longer on screen.
+  if (expandedId && !filtered.some(t => t.id === expandedId)) expandedId = null;
+
+  grid.innerHTML = filtered.map(cardHTML).join('');
+  resetBtn.hidden = !hasFilters;
+  resultCount.textContent = filtered.length === 1 ? '1 tradie found' : filtered.length + ' tradies found';
+  emptyTitle.textContent = 'No matches yet';
+  emptyBody.textContent = 'Try clearing a filter, or widen the search to a nearby area.';
+  emptyState.hidden = filtered.length > 0;
+  grid.hidden = filtered.length === 0;
+}
+
+// One delegated listener for the whole grid — no per-card bindings.
+function setExpanded(card, open) {
+  card.classList.toggle('expanded', open);
+  card.querySelectorAll('[aria-expanded]').forEach(el => el.setAttribute('aria-expanded', String(open)));
+  card.querySelector('.toggle-text').textContent = open ? 'Hide details' : 'View details';
+}
+
+grid.addEventListener('click', (e) => {
+  const toggle = e.target.closest('.card-toggle, .btn-details');
+  if (!toggle || !grid.contains(toggle)) return;
+
+  const card = toggle.closest('.card');
+  const willOpen = !card.classList.contains('expanded');
+
+  // The card the user clicked must not move under their cursor. Closing a card
+  // above it would otherwise shift the whole list upwards, so collapse that one
+  // without animation, then correct the scroll by however much it shifted.
+  const anchorTop = card.getBoundingClientRect().top;
+  const current = grid.querySelector('.card.expanded');
+  if (current && current !== card) {
+    current.classList.add('no-anim');
+    setExpanded(current, false);
+    void current.offsetHeight; // force the collapse to apply in this frame
+    current.classList.remove('no-anim');
+  }
+
+  setExpanded(card, willOpen);
+  expandedId = willOpen ? card.dataset.id : null;
+
+  const shift = card.getBoundingClientRect().top - anchorTop;
+  if (shift) window.scrollBy(0, shift);
+});
+
+// Escape closes the open card and returns focus to its trigger.
+document.addEventListener('keydown', (e) => {
+  if (e.key !== 'Escape') return;
+  const open = grid.querySelector('.card.expanded');
+  if (!open) return;
+  setExpanded(open, false);
+  expandedId = null;
+  open.querySelector('.btn-details').focus();
+});
+
+[areaSel, tradeSel, langSel].forEach(el => el.addEventListener('change', render));
+resetBtn.addEventListener('click', () => {
+  areaSel.value = tradeSel.value = langSel.value = '';
+  buildFilterOptions();
+  render();
+  areaSel.focus();
+});
+
+loadData();
+</script>
+</body>
+</html>
